@@ -56,7 +56,7 @@ class PasswordViewController: UIViewController {
             .rx
             .tap
             .bind(with: self) { owner, _ in
-                print("show alert")
+                owner.navigationController?.pushViewController(PhoneViewController(), animated: true)
             }
             .disposed(by: disposeBag)
         
