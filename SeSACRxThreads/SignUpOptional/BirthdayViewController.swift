@@ -74,7 +74,7 @@ class BirthdayViewController: UIViewController {
     let year = BehaviorSubject<Int>(value: 2024)
     let month = BehaviorSubject<Int>(value: 3)
     let day = BehaviorSubject<Int>(value: 29)
-    
+    let info = BehaviorSubject<Bool>(value: true)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -102,6 +102,42 @@ class BirthdayViewController: UIViewController {
         day
             .map { String($0) + "일"}
             .bind(to: dayLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        birthDayPicker.rx
+            .date
+            .bind(with: self) { owner, date in
+                let pickerComponent = Calendar.current.dateComponents([.year, .month, .day], from: date)
+                
+                owner.year.onNext(pickerComponent.year!)
+                owner.month.on(.next(pickerComponent.month!))
+                owner.day.onNext(pickerComponent.day!)
+                
+                let currentCompoenet = Calendar.current.dateComponents([.year], from: Date())
+                let yearCheck = currentCompoenet.year! - pickerComponent.year!
+                
+                print(yearCheck)
+                
+                owner.info.onNext(yearCheck < 17)
+            }
+            .disposed(by: disposeBag)
+        
+        info
+            .bind(with: self) { owner, value in
+                owner.infoLabel.text = value ? "17세 이상만 가입 가능합니다" : "가입 가능한 나이입니다."
+                owner.infoLabel.textColor = value ? UIColor.red : UIColor.blue
+                owner.nextButton.isEnabled = value ? false : true
+                owner.nextButton.backgroundColor = value ? UIColor.lightGray : UIColor.blue
+            }
+            .disposed(by: disposeBag)
+        
+        nextButton
+            .rx
+            .tap
+            .bind(with: self) { owner, _ in
+                let viewController = SignInViewController()
+                owner.view.window?.rootViewController = viewController
+            }
             .disposed(by: disposeBag)
     }
     
