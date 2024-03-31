@@ -68,6 +68,14 @@ class PhoneViewController: UIViewController {
                 owner.nextButton.backgroundColor = color
             }
             .disposed(by: disposeBag)
+        
+        nextButton
+            .rx
+            .tap
+            .bind(with: self) { owner, _ in
+                owner.navigationController?.pushViewController(BirthdayViewController(), animated: true)
+            }
+            .disposed(by: disposeBag)
     }
     
     func configureLayout() {
