@@ -135,7 +135,7 @@ class BirthdayViewController: UIViewController {
             .rx
             .tap
             .bind(with: self) { owner, _ in
-                let viewController = SignInViewController()
+                let viewController = SampleViewController()
                 owner.view.window?.rootViewController = viewController
             }
             .disposed(by: disposeBag)
